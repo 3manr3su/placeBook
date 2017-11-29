@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+        <form method='POST'>
+            <table>
+                <tbody>
+                        <div id="bannerimage4"></div>
+                    <h1>log in.//connect//</h1>
+                    <tr>
+                        <td>
+                            <label for='username'>Username</label>
+                        </td>
+                        <td>
+                            <input id="username", type="text" name='username', value='{{username}}'/>
+                            <span class = "error">{{username_error}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for='password'>Password</label>
+                        </td>
+                        <td>
+                            <input id='password', type="password" name='password', value='{{password}}'/>
+                            <span class = "error">{{password_error}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <input type="submit" value="Submit"/>
+        </form>
+        <img class="center" src="https://i.imgur.com/4jEezu7.png" alt="pb logo"/>  
+{% endblock %}

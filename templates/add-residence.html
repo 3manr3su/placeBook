@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+    
+        <div id="bannerimage5"></div> 
+        <h3>//share// your experience.</h3>
+        
+        <form method='POST'>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <label for='street'>Street Address</label>
+                            </td>
+                            <td>
+                                <input id="street", type="text" name='street', value='{{street}}'/>
+                                <span class = "error">{{street_error}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for='apt'>Apartment/Unit Number</label>
+                            </td>
+                            <td>
+                                <input id='apt', type="text" name='apt', value='{{apt}}'/>
+                                <span class = "error">{{apt_error}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for='city'>City</label>
+                            </td>
+                            <td>
+                                <input id="city", type="text" name='city', value='{{city}}'/>
+                                <span class = "error">{{city_error}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for='state'>State (e.g., MO)</label>
+                            </td>
+                            <td>
+                                <input id="state", type="text" name='state', value='{{state}}'/>
+                                <span class = "error">{{state_error}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for='zipcode'>Zip Code </label>
+                            </td>
+                            <td>
+                                <input id="zipcode", type="text" name='zipcode', value='{{zipcode}}'/>
+                                <span class = "error">{{zip_error}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for='residence'>Type of residence</label>
+                            </td>
+                            <td>
+                                <select id= 'residence' name="residence" value='{{residence}}' required>
+                                    <option value="select">Select</option>
+                                    <option value="apartment">Apartment building</option>
+                                    <option value="townhouse">Town House</option>
+                                    <option value="house">House</option>
+                                </select>
+                                <span class = "error">{{residence_error}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for='room-number'>Number of bedrooms</label>
+                            </td>
+                            <td>
+                                <select id= 'room-number' name="room-number" value='{{room_number}}' required>
+                                    <option value="select">Select</option>
+                                    <option value="0BR">Studio</option>
+                                    <option value="1BR">1BR</option>
+                                    <option value="2BR">2BR</option>
+                                    <option value="3BR">3BR</option>
+                                    <option value="4+BR">4+BR</option>
+                                </select>
+                                <span class="error">{{room_error}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for='building'>Building Name </label>
+                            </td>
+                            <td>
+                                <input id="building", type="text" name='building', value='{{building}}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for='management'>Landlord/Property Management Company Name </label>
+                            </td>
+                            <td>
+                                <input id="management", type="text" name='management', value='{{management}}'/>
+                            </td>
+                            <tr>
+                                <td>
+                                    <label for='rating'>Rating (scale of 1 - 10) </label>
+                                </td>
+                                <td>
+                                        <select id= 'rating' name="rating" value = '{{rating}}' required>
+                                            <option value="select">Select</option>
+                                            {% for i in range(1, 11): %}
+                                            <option value="{{i}}">{{i}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    <span class="error">{{rating_error}}</span>
+                                </td>
+                            </tr>
+                        </tr>
+                    </tbody>
+                </table>
+                <label for='comment'>Describe your experience.</label>
+                <textarea id='comment' cols="50" rows="4" name='comment', value='{{comment}}'></textarea>
+                <span class="error">{{comment_error}}</span>
+                <input type="submit" value="Submit"/>
+                <img class="center" src="https://i.imgur.com/4jEezu7.png" alt="pb logo"/>  
+            </form>  
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+
+        <form method='POST'>
+            <table>
+                <tbody>
+                    <div id="bannerimage3"></div>
+                    
+                    <h1>sign up. //help// your community.</h1>
+                    <tr>
+                        <td>
+                            <label for='username'>Username</label>
+                        </td>
+                        <td>
+                            <input id="username", type="text" name='username', value='{{username}}'/>
+                            <span class = "error">{{username_error}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for='password'>Password</label>
+                        </td>
+                        <td>
+                            <input id='password', type="password" name='password', value='{{password}}'/>
+                            <span class = "error">{{password_error}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for='verify'>Verify Password</label>
+                        </td>
+                        <td>
+                            <input id="verify", type="password" name='verify', value='{{verify}}'/>
+                            <span class = "error"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for='email'>Email </label>
+                        </td>
+                        <td>
+                            <input id="email", type="text" name='email', value='{{email}}'/>
+                            <span class="error">{{email_error}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <input type="submit" value="Submit"/>
+            <img class="center" src="https://i.imgur.com/4jEezu7.png" alt="pb logo"/>  
+        </form>
+{% endblock %}
