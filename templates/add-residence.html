@@ -1,3 +1,7 @@
+<!--- Add discreet ratings for management, amenitites, quality of living space;
+    add dropdown selects/bullet selects for various amenitites (i.e., washer, dryer, washing machine,
+    google fiber, gym, pool, off-street parking, elevator, etc.) !--> 
+
 {% extends "base.html" %}
 {% block content %}
     
@@ -12,7 +16,7 @@
                                 <label for='street'>Street Address</label>
                             </td>
                             <td>
-                                <input id="street", type="text" name='street', value='{{street}}'/>
+                                <input id="street", type="text" name='street', value='{{street}}' required/>
                                 <span class = "error">{{street_error}}</span>
                             </td>
                         </tr>
@@ -30,7 +34,7 @@
                                 <label for='city'>City</label>
                             </td>
                             <td>
-                                <input id="city", type="text" name='city', value='{{city}}'/>
+                                <input id="city", type="text" name='city', value='{{city}}' required/>
                                 <span class = "error">{{city_error}}</span>
                             </td>
                         </tr>
@@ -39,7 +43,7 @@
                                 <label for='state'>State (e.g., MO)</label>
                             </td>
                             <td>
-                                <input id="state", type="text" name='state', value='{{state}}'/>
+                                <input id="state", type="text" name='state', value='{{state}}'required/>
                                 <span class = "error">{{state_error}}</span>
                             </td>
                         </tr>
@@ -48,7 +52,7 @@
                                 <label for='zipcode'>Zip Code </label>
                             </td>
                             <td>
-                                <input id="zipcode", type="text" name='zipcode', value='{{zipcode}}'/>
+                                <input id="zipcode", type="text" name='zipcode', value='{{zipcode}}'required/>
                                 <span class = "error">{{zip_error}}</span>
                             </td>
                         </tr>
@@ -57,8 +61,8 @@
                                 <label for='residence'>Type of residence</label>
                             </td>
                             <td>
-                                <select id= 'residence' name="residence" value='{{residence}}' required>
-                                    <option value="select">Select</option>
+                                <select id= 'residence' name="residence" required>
+                                    <option value="">Select</option>
                                     <option value="apartment">Apartment building</option>
                                     <option value="townhouse">Town House</option>
                                     <option value="house">House</option>
@@ -71,8 +75,8 @@
                                 <label for='room-number'>Number of bedrooms</label>
                             </td>
                             <td>
-                                <select id= 'room-number' name="room-number" value='{{room_number}}' required>
-                                    <option value="select">Select</option>
+                                <select id= 'room-number' name="room-number" required>
+                                    <option value="">Select</option>
                                     <option value="0BR">Studio</option>
                                     <option value="1BR">1BR</option>
                                     <option value="2BR">2BR</option>
@@ -92,6 +96,50 @@
                         </tr>
                         <tr>
                             <td>
+                                <legend>Amenitites (Select all that apply)</legend>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="amenities" id="laundry-in-unit" value="laundry-in-unit"/><label class="checkbox" for="laundry-in-unit">Laundry in Unit</label>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="amenities" id="communal-laundry" value="communal-laundry"/><label class="checkbox" for="communal-laundry">Communal Laundry Facilities</label>
+                            
+                             </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="amenities" id="washing-machine" value="washing-machine"/><label class="checkbox" for="washing-machine">Washing Machine</label>
+                            <td>
+                                    <input type="checkbox" name="amenities" id="off-street-parking" value="off-street-parking"/><label class="checkbox" for="off-street-parking">Off-Street Parking</label>
+                        </tr>    
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="amenities" id="gym" value="gym"/><label class="checkbox" for="gym">Gym/Workout Facilities</label>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="amenities" id="swimming-pool" value="simming-pool"/><label class="checkbox" for="swimming-pool">Swimming Pool</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="amenities" id="elevator" value="elevator"/><label class="checkbox" for="elevator">Elevator</label>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="amenities" id="central-air" value="central-air"/><label class="checkbox" for="central-air">Central Air</label>
+                            </td>
+                        </tr>     
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="amenities" id="refrigerator" value="refrigerator"/><label class="checkbox" for="refrigerator">Refrigerator</label>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="amenities" id="google-fiber" value="google-fiber"/><label class="checkbox" for="google-fiber">Google Fiber</label>
+                            </td>
+                        </tr> 
+                        <tr>
+                            <td>
                                 <label for='management'>Landlord/Property Management Company Name </label>
                             </td>
                             <td>
@@ -102,8 +150,8 @@
                                     <label for='rating'>Rating (scale of 1 - 10) </label>
                                 </td>
                                 <td>
-                                        <select id= 'rating' name="rating" value = '{{rating}}' required>
-                                            <option value="select">Select</option>
+                                        <select id= 'rating' name="rating" required>
+                                            <option value="">Select</option>
                                             {% for i in range(1, 11): %}
                                             <option value="{{i}}">{{i}}</option>
                                             {% endfor %}
@@ -115,7 +163,7 @@
                     </tbody>
                 </table>
                 <label for='comment'>Describe your experience.</label>
-                <textarea id='comment' cols="50" rows="4" name='comment', value='{{comment}}'></textarea>
+                <textarea id='comment' cols="50" rows="4" name='comment'></textarea>
                 <span class="error">{{comment_error}}</span>
                 <input type="submit" value="Submit"/>
                 <img class="center" src="https://i.imgur.com/4jEezu7.png" alt="pb logo"/>  
