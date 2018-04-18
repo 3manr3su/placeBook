@@ -55,6 +55,13 @@ class ResidenceInfo(db.Model):
         self.rating = rating
         self.comment = comment
 
+
+@app.before_request
+def require_login():
+    allowed_routes = ['login',  'index', 'create']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
+
 @app.route('/')
 def index():
     return render_template('index.html', title="PlaceBook Home")
