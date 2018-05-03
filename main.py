@@ -201,51 +201,44 @@ def add():
         rating_error = ""
         comment_error = ""
 
-    if apt == "":
-        apt = "None"
-    if building == "":
-        building = "None"
-    if amenities =="":
-        amenities = "None"
-    if management == "":
-        management = "None"
+     
     
     
     
     
-    if street == "":
-        street_error = "Must enter a valid street address"
-    elif not any(i.isdigit() for i in street) or not any(i.isalpha()for i in street):
-        street_error = "Must enter a valid street address"
-    
-    if city == "":
-        city_error = "Must enter a city"
+        if street == "":
+            street_error = "Must enter a valid street address"
+        elif not any(i.isdigit() for i in street) or not any(i.isalpha()for i in street):
+            street_error = "Must enter a valid street address"
+        
+        if city == "":
+            city_error = "Must enter a city"
 
-    if state == "":
-        state_error = "Must enter a state"
-    elif len(state) > 2:
-        state_error = "Enter valid state abbreviation" 
+        if state == "":
+            state_error = "Must enter a state"
+        elif len(state) > 2:
+            state_error = "Enter valid state abbreviation" 
 
-    if residence == "":
-        residence_error = "Please select a residence type"
+        if residence == "":
+            residence_error = "Please select a residence type"
 
-    if room_number == "":
-        room_error = "Please select the number of rooms in the residence"
+        if room_number == "":
+            room_error = "Please select the number of rooms in the residence"
 
-    if rating == "":
-        rating_error = "Please select a rating"
+        if rating == "":
+            rating_error = "Please select a rating"
 
-    if comment == "":
-        comment_error = "Please describe your experience"           
-   
+        if comment == "":
+            comment_error = "Please describe your experience"           
     
-    if street_error or apt_error or city_error or state_error or zip_error or residence_error or room_error or rating_error or comment_error:
-        return render_template('add-residence.html', title = "Add Residence", street=street, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment, street_error=street_error, apt_error=apt_error, city_error=city_error, state_error=state_error, zip_error=zip_error, rating_error=rating_error)
-    else:
-        new_residence = (ResidenceInfo(owner, street, apt, city, state, zipcode, residence, room_number, building, amenities, management, rating, comment))
-        db.session.add(new_residence)
-        db.session.commit()
-        return redirect('/thankyou')    
+        
+        if street_error or apt_error or city_error or state_error or zip_error or residence_error or room_error or rating_error or comment_error:
+            return render_template('add-residence.html', title = "Add Residence", street=street, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment, street_error=street_error, apt_error=apt_error, city_error=city_error, state_error=state_error, zip_error=zip_error, rating_error=rating_error)
+        else:
+            new_residence = (ResidenceInfo(owner, street, apt, city, state, zipcode, residence, room_number, building, amenities, management, rating, comment))
+            db.session.add(new_residence)
+            db.session.commit()
+            return redirect('/thankyou')    
 @app.route('/thankyou')
 def thankyou():
     username =  session['username']
@@ -265,7 +258,7 @@ def search():
         room_number = request.form['room-number']
         rating = request.form['rating']
       
-        return redirect('/results?street={0}&city={1}&state={2}&zipcode={3}&residence={4}&room_number={5}&rating={6}'.format(street, city, state, zipcode, residence, room_number, rating))
+        return redirect('/results?street={0}&city={1}&state={2}&zipcode={3}&residence={4}&room_number={5}&rating>{6}'.format(street, city, state, zipcode, residence, room_number, rating))
 
 
 @app.route('/results', methods=["GET"])
