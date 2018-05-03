@@ -60,7 +60,7 @@ class ResidenceInfo(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login',  'index', 'create']
+    allowed_routes = ['login',  'index', 'create', 'welcome']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -426,6 +426,14 @@ def edit_post():
             posts.comment=comment
             db.session.commit()
             return redirect('/thankyou')
+@app.route('/delete_post')
+def delete():
+    post_id = request.args.get('id')
+    post = ResidenceInfo.query.filter_by(id=post_id).first()
+    db.session.delete(post)
+    db.session.commit()
+    return render_template('delete_post.html')
+    
             
 @app.route('/logout')
 def logout():

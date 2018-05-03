@@ -5,6 +5,7 @@
         
         <a href="{{url_for('search')}}">Search placeBook</a><br>
         <a href="{{url_for('add')}}">Add another rental rating to placeBook</a>
+        <a href='/reviews?username={{session['username']}}'>Review, edit, or delete your posts</a><br>
         <a href="{{url_for('logout')}}">Log out</a>
 
         <img class="center" src="https://i.imgur.com/4jEezu7.png" alt="pb logo"/>  

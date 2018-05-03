@@ -2,6 +2,9 @@
 {% block content %}
 <body>
         <div id="bannerimage5"></div> 
+        <a href="{{url_for('search')}}">New search</a><br>
+        <a href="{{url_for('add')}}">Add a rental rating to placeBook</a><br>
+        <a href="{{url_for('logout')}}">Log out</a><br><br>
         <h3>//review//your posts</h3>
       
         {% for post in posts %}
@@ -30,9 +33,7 @@
        
         
         {% endfor %}
-        <a href="{{url_for('search')}}">New search</a><br>
-        <a href="{{url_for('add')}}">Add a rental rating to placeBook</a><br>
-        <a href="{{url_for('logout')}}">Log out</a>
+        
         
         
     

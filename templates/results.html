@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <body>
-        <div id="bannerimage5"></div> 
+        <div id="bannerimage5"></div>
+        <a href="{{url_for('search')}}">New search</a><br> 
         <a href="{{url_for('add')}}">Add a rental rating to placeBook</a><br>
-        <a href="{{url_for('logout')}}">Log out</a><br>
+        <a href='/reviews?username={{session['username']}}'/> Review, edit, or delete your posts</a><br>
+        <a href="{{url_for('logout')}}">Log out</a><br><br>
         <h3>//find//your future home</h3>
     
         {% for post in search %}
@@ -25,9 +27,7 @@
 
         
         {% endfor %}
-        <a href='/reviews?username={{session['username']}}'/> Review, edit, or delete your posts</a><br>
         
-        <a href="{{url_for('search')}}">New search</a>
     
 </body> 
 {% endblock %}
