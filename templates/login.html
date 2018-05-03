@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
+<a href="{{url_for('search')}}">Search placeBook</a><br>
 
         <form method='POST'>
             <table>
                 <tbody>
                         <div id="bannerimage4"></div>
                     <h1>log in.//connect//</h1>
+                    <span class="error">{{error}}</span>
                     <tr>
                         <td>
                             <label for='username'>Username</label>

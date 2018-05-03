@@ -2,7 +2,10 @@
 {% block content %}
             <div id="bannerimage6"></div> 
         <h4>Thanks for your submission, {{username}}! Because of your help, other renters now know what to expect before moving in :)</h4>
-        **link to search**
+        
+        <a href="{{url_for('search')}}">Search placeBook</a><br>
+        <a href="{{url_for('add')}}">Add another rental rating to placeBook</a>
+        <a href="{{url_for('logout')}}">Log out</a>
 
         <img class="center" src="https://i.imgur.com/4jEezu7.png" alt="pb logo"/>  
 {% endblock %}

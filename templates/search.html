@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block content %}
+<body>
+        <div id="bannerimage5"></div> 
+        <a href='/reviews?username={{session['username']}}'>Click here to see your reviews.</a><br>
+        <a href="{{url_for('add')}}">Add a rental rating to placeBook</a><br>
+        <a href="{{url_for('logout')}}">Log out</a><br>
+        <h3>//find// your new home.</h3>
+
+        <h4>//select// your search parameters.</h4>
+        <form method='POST'>  
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <label for='street'>Street Address</label>
+                        </td>
+                        <td>
+                            <input id="street", type="text" name='street', value='{{street}}' />
+                            <span class = "error">{{street_error}}</span>
+                        </td>
+                    </tr>
+            
+                    <tr>
+                        <td>
+                            <label for='city'>City</label>
+                        </td>
+                        <td>
+                            <input id="city", type="text" name='city', value='{{city}}' />
+                            <span class = "error">{{city_error}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for='state'>State (e.g., MO)</label>
+                        </td>
+                        <td>
+                            <input id="state", type="text" name='state', value='{{state}}'/>
+                            <span class = "error">{{state_error}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for='zipcode'>Zip Code </label>
+                        </td>
+                        <td>
+                            <input id="zipcode", type="text" name='zipcode', value='{{zipcode}}'/>
+                            <span class = "error">{{zip_error}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for='residence'>Type of residence</label>
+                        </td>
+                        <td>
+                            <select id= 'residence' name="residence" >
+                                <option value="">Select</option>
+                                <option value="apartment">Apartment building</option>
+                                <option value="townhouse">Town House</option>
+                                <option value="house">House</option>
+                            </select>
+                        
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for='room-number'>Number of bedrooms</label>
+                        </td>
+                        <td>
+                            <select id= 'room-number' name="room-number" >
+                                <option value="">Select</option>
+                                <option value="0BR">Studio</option>
+                                <option value="1BR">1BR</option>
+                                <option value="2BR">2BR</option>
+                                <option value="3BR">3BR</option>
+                                <option value="4+BR">4+BR</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for='building'>Building Name </label>
+                        </td>
+                        <td>
+                            <input id="building", type="text" name='building', value='{{building}}'/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for='management'>Landlord/Property Management Company Name </label>
+                        </td>
+                        <td>
+                            <input id="management", type="text" name='management', value='{{management}}'/>
+                        </td>
+                        <tr>
+                            <td>
+                                <label for='rating'>Minimum Rating (scale of 1 - 10) </label>
+                            </td>
+                            <td>
+                                    <select id= 'rating' name="rating">
+                                        <option value="">Select</option>
+                                        {% for i in range(1, 11): %}
+                                        <option value="{{i}}">{{i}}</option>
+                                        {% endfor %}
+                                    </select>
+                            </td>
+                        </tr>
+                    </tr>
+                </tbody>
+            </table>
+            <input type="submit" value="Submit"/>
+        </form>  
+</body>
+
+{% endblock %}

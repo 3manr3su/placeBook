@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<body>
+        <div id="bannerimage5"></div> 
+        <h3>//review//your posts</h3>
+      
+        {% for post in posts %}
+        
+        <h3>{{post.street}}</h3></a>
+        <p>
+        {{post.street}}, {{post.apt}}<br><br>
+        {{post.city}}, {{post.state}}<br><br>
+        {{post.zipcode}}<br><br>
+        <b>Type of residence:</b> {{post.residence}}<br><br>
+        <b>Number of Bedrooms:</b> {{post.room_number}}<br><br>
+        <b>Building Name:</b> {{post.building}}<br><br>
+        <b>Featured Amenities:</b> {{post.amenities}}<br><br>
+        <b>Property Managment:</b> {{post.management}}<br><br>
+        <b>Rating:</b> {{post.rating}}<br><br>
+        <b>User description:</b>{{post.comment}}<br><br>
+        <a href='/edit_post?id={{post.id}}'/>Edit</a>
+        
+       
+        
+        
+        <!-- {{post.rent}} {{post.avg_rating}} -->
+       <!--Google APIs-->
+
+        </p>
+       
+        
+        {% endfor %}
+        <a href="{{url_for('search')}}">New search</a><br>
+        <a href="{{url_for('add')}}">Add a rental rating to placeBook</a><br>
+        <a href="{{url_for('logout')}}">Log out</a>
+        
+        
+    
+</body> 
+{% endblock %}

@@ -1,5 +1,6 @@
-from flask import Flask, request, redirect, render_template, url_for, session
-from flask_sqlalchemy import SQLAlchemy 
+from flask import Flask, request, redirect, render_template, url_for, session, flash
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import and_, select, create_engine 
 import os
 import cgi
 
@@ -7,6 +8,7 @@ import cgi
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://placebook:asdf@localhost:8889/placebook'
+engine = create_engine('mysql+pymysql://placebook:asdf@localhost:8889/placebook')
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 app.secret_key = 'y337kGcys&zP3B'
@@ -66,6 +68,54 @@ def require_login():
 def index():
     return render_template('index.html', title="PlaceBook Home")
 
+
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html', title = "User Login")
+    else:
+        username = request.form['username']
+        password = request.form['password']
+    
+        
+        user_exists = UserInfo.query.filter_by(username=username).first() 
+        if user_exists:
+            print(user_exists.username)
+        username_error = ""
+        password_error = ""
+    
+    if username == "":
+        username_error = "Must enter a user name"
+    elif " " in username:
+        username_error = "Username cannot contain a space"
+    elif len(username) > 20 or len(username) < 3:
+        username_error = "User name must be betweeen 3 and 20 characters"
+    elif not user_exists:
+        username_error = "Username does not exist"
+
+    
+    if password == "":
+        password_error = "Must enter a password"
+    elif " " in password:
+        password_error = "Password cannot contain a space"
+    elif len(password) > 20 or len(password) < 3:
+        password_error = "Password must be betweeen 3 and 20 characters"
+    elif user_exists and user_exists.password != password:
+        password_error = "Incorrect password"
+    
+    if username_error or password_error:
+        return render_template('login.html', title = "User Login", username=username, password="", verify="", username_error=username_error, password_error=password_error)
+    else:
+        session['username'] = username
+        return redirect('/search')
+
+
+
+@app.route('/welcome')
+def welcome():
+    username = request.args.get('username')
+    return render_template('welcome.html', username=username, title="Welcome!")    
+
 @app.route('/create', methods=['POST', 'GET'])
 def create():
     if request.method == 'GET':
@@ -122,53 +172,6 @@ def create():
         return redirect('/welcome?username={0}'.format(username))
     
 
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    if request.method == 'GET':
-        return render_template('login.html', title = "User Login")
-    else:
-        username = request.form['username']
-        password = request.form['password']
-    
-        
-        user_exists = UserInfo.query.filter_by(username=username).first() 
-        if user_exists:
-            print(user_exists.username)
-        username_error = ""
-        password_error = ""
-    
-    if username == "":
-        username_error = "Must enter a user name"
-    elif " " in username:
-        username_error = "Username cannot contain a space"
-    elif len(username) > 20 or len(username) < 3:
-        username_error = "User name must be betweeen 3 and 20 characters"
-    elif not user_exists:
-        username_error = "Username does not exist"
-
-    
-    if password == "":
-        password_error = "Must enter a password"
-    elif " " in password:
-        password_error = "Password cannot contain a space"
-    elif len(password) > 20 or len(password) < 3:
-        password_error = "Password must be betweeen 3 and 20 characters"
-    elif user_exists and user_exists.password != password:
-        password_error = "Incorrect password"
-    
-    if username_error or password_error:
-        return render_template('login.html', title = "User Login", username=username, password="", verify="", username_error=username_error, password_error=password_error)
-    else:
-        session['username'] = username
-        return redirect('/add-residence')
-
-
-
-@app.route('/welcome')
-def welcome():
-    username = request.args.get('username')
-    return render_template('welcome.html', username=username, title="Welcome!")
-
 @app.route('/add-residence', methods=['POST', 'GET'])
 def add():
     if request.method == 'GET':
@@ -198,6 +201,17 @@ def add():
         rating_error = ""
         comment_error = ""
 
+    if apt == "":
+        apt = "None"
+    if building == "":
+        building = "None"
+    if amenities =="":
+        amenities = "None"
+    if management == "":
+        management = "None"
+    
+    
+    
     
     if street == "":
         street_error = "Must enter a valid street address"
@@ -236,6 +250,195 @@ def add():
 def thankyou():
     username =  session['username']
     return render_template('thankyou.html', title = 'Thank You!!', username=username)
+
+
+@app.route('/search', methods=['POST', 'GET'])
+def search():
+    if request.method == 'GET':
+        return render_template('search.html')
+    else:
+        street = request.form['street']
+        city = request.form['city']
+        state = request.form['state']
+        zipcode = request.form['zipcode']
+        residence = request.form['residence']
+        room_number = request.form['room-number']
+        rating = request.form['rating']
+      
+        return redirect('/results?street={0}&city={1}&state={2}&zipcode={3}&residence={4}&room_number={5}&rating={6}'.format(street, city, state, zipcode, residence, room_number, rating))
+
+
+@app.route('/results', methods=["GET"])
+def results():
+   
+    search_vars = {}
+    search_terms = []
+    string = ""
+
+
+    if request.args.get('street') == '':
+        street = None
+    else:
+        street = request.args.get('street')
+    if request.args.get('city') == '':
+        city = None
+    else:
+        city = request.args.get('city')
+    if request.args.get('state') == '':
+        state = None
+    else:
+        state = request.args.get('state')
+    if request.args.get('zipcode') == '':
+        zipcode = None
+    else:
+        zipcode = request.args.get('zipcode')
+    if request.args.get('residence') == '':
+        residence = None
+    else:
+        residence = request.args.get('residence')
+    if request.args.get('room_number') == '':
+        room_number = None
+    else:
+        room_number = request.args.get('room_number')
+    if request.args.get('rating') == '':
+        rating = None
+    else:
+        rating = request.args.get('rating')
+    
+    if street != None:
+        search_vars["street"] = street
+    if city != None:
+        search_vars["city"] = city
+    if state != None:
+        search_vars["state"] = state
+    if zipcode != None:
+        search_vars["zipcode"] = zipcode
+    if residence != None:
+        search_vars["residence"] = residence
+    if room_number != None:
+        search_vars["room_number"] = room_number
+    if rating != None:
+        search_vars["rating"] = rating
+    
+    for key, value in search_vars.items():
+        search_terms.append([key, value])
+    for i in search_terms:
+        if search_terms.index(i) +1 < len(search_terms):
+            string += str("residence_info." + i[0] + " = " + "'" + i[1] + "'" + "AND ")
+        else:
+            string += str("residence_info." + i[0] + " = " + "'" + i[1] + "'" ) 
+        
+    search = ResidenceInfo.query.filter(and_(string))
+     
+    return render_template('results.html', search=search, street=street, city=city, state=state, zipcode=zipcode, residence=residence, room_number=room_number, rating=rating, string=string)    
+
+@app.route('/reviews', methods=['GET'])
+def reviews():
+    user = session['username']
+    current_user = UserInfo.query.filter_by(username=user).first()
+    userid = current_user.id
+    user_posts = ResidenceInfo.query.filter_by(owner_id=userid).all()
+    return render_template('reviews.html', posts=user_posts)
+
+@app.route('/single_post', methods=['GET'])
+def single_post():
+    id = request.args.get('id')
+    posts = ResidenceInfo.query.filter_by(id=id).all()
+    
+    return render_template('single_post.html', posts=posts)
+
+@app.route('/edit_post', methods=['POST', 'GET'])
+def edit_post():
+    post_id = request.args.get('id')    
+    posts = ResidenceInfo.query.filter_by(id=post_id).first()
+    if request.method == 'GET':
+        
+        street = posts.street
+        apt = posts.apt
+        city = posts.city
+        state = posts.state
+        zipcode = posts.zipcode
+        residence = posts.residence
+        room_number = posts.room_number
+        building = posts.building
+        amenities = posts.amenities
+        management = posts.management
+        rating = posts.rating
+        comment = posts.comment
+        return render_template('edit_post.html', posts=posts, street=street, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment)
+    else:
+        street = request.form['street']
+        apt = request.form['apt']
+        city = request.form['city']
+        state = request.form['state']
+        zipcode = request.form['zipcode']
+        residence = request.form['residence']
+        room_number = request.form['room-number']
+        building = request.form['building']
+        amenities = request.form['amenities']
+        management = request.form['management']
+        rating = request.form['rating']
+        comment = request.form['comment']
+
+        street_error = ""
+        apt_error = ""
+        city_error = ""
+        state_error= ""
+        zip_error = ""
+        residence_error = ""
+        room_error = ""
+        rating_error = ""
+        comment_error = ""
+        
+        if street == "":
+            street_error = "Must enter a valid street address"
+        elif not any(i.isdigit() for i in street) or not any(i.isalpha()for i in street):
+            street_error = "Must enter a valid street address"
+        
+        if city == "":
+            city_error = "Must enter a city"
+
+        if state == "":
+            state_error = "Must enter a state"
+        elif len(state) > 2:
+            state_error = "Enter valid state abbreviation" 
+
+        if residence == "":
+            residence_error = "Please select a residence type"
+
+        if room_number == "":
+            room_error = "Please select the number of rooms in the residence"
+
+        if rating == "":
+            rating_error = "Please select a rating"
+
+        if comment == "":
+            comment_error = "Please describe your experience"           
+    
+        
+        if street_error or apt_error or city_error or state_error or zip_error or residence_error or room_error or rating_error or comment_error:
+            return render_template('add-residence.html', title = "Add Residence", street=street, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment, street_error=street_error, apt_error=apt_error, city_error=city_error, state_error=state_error, zip_error=zip_error, rating_error=rating_error)
+        else:
+            posts.street=street
+            posts.apt=apt
+            posts.city=city
+            posts.state=state
+            posts.zipcode=zipcode
+            posts.residence=residence
+            posts.room_number=room_number
+            posts.building=building
+            posts.amenities=amenities
+            posts.managament=management
+            posts.rating=rating
+            posts.comment=comment
+            db.session.commit()
+            return redirect('/thankyou')
+            
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect('/')
+
 
 if __name__ == '__main__':
     app.run()

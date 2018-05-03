@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<body>
+        <div id="bannerimage5"></div> 
+        <a href="{{url_for('add')}}">Add a rental rating to placeBook</a><br>
+        <a href="{{url_for('logout')}}">Log out</a><br>
+        <h3>//find//your future home</h3>
+    
+        {% for post in search %}
+        
+        <h2><a href='/single_post?id={{post.id}}'> {{post.street}}</a></h2>
+        {{post.street}}<br>
+        {{post.city}} <br>
+        Rating: {{post.rating}}
+        
+
+       
+        
+       <br><br><br>
+       
+        
+        
+        <!-- {{post.rent}} {{post.avg_rating}} -->
+        <!-- link to individual post page -->
+
+        
+        {% endfor %}
+        <a href='/reviews?username={{session['username']}}'/> Review, edit, or delete your posts</a><br>
+        
+        <a href="{{url_for('search')}}">New search</a>
+    
+</body> 
+{% endblock %}
