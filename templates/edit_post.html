@@ -17,8 +17,9 @@
                                 <label for='street'>Street Address</label>
                             </td>
                             <td>
-                                <input id="street", type="text" name='street', value='{{street}}' required/>
+                                <input id="street", type="text" name='street', value='{{street}}', placeholder="Street Number", required/>
                                 <span class = "error">{{street_error}}</span>
+                                <input it="route", type="text", name='route', value='{{route}}', placeholder="Street Name" required/>
                             </td>
                         </tr>
                         <tr>
@@ -35,7 +36,7 @@
                                 <label for='city'>City</label>
                             </td>
                             <td>
-                                <input id="city", type="text" name='city', value='{{city}}' required/>
+                                <input id="city", type="text" name='city', value='{{city}}', required/>
                                 <span class = "error">{{city_error}}</span>
                             </td>
                         </tr>
@@ -167,8 +168,11 @@
                 <textarea id='comment' cols="50" rows="4" name='comment' value={{comment}}></textarea>
                 <span class="error">{{comment_error}}</span>
                 <input type="submit" value="Submit"/>
-                <img class="center" src="https://i.imgur.com/4jEezu7.png" alt="pb logo"/>  
+                
             </form> 
+            <img class="center" src="https://i.imgur.com/4jEezu7.png" alt="pb logo"/> 
+            <br> 
+
     <a href='/delete_post?id={{posts.id}}'>delete this post</a>
 
 </body>

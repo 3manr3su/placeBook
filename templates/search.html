@@ -2,12 +2,10 @@
 {% block content %}
 <body>
         <div id="bannerimage5"></div> 
-        <a href='/reviews?username={{session['username']}}'>Review, edit, or delete your posts</a><br>
-        <a href="{{url_for('add')}}">Add a rental rating to placeBook</a><br>
-        <a href="{{url_for('logout')}}">Log out</a><br>
+       
         <h3>//find// your new home.</h3>
 
-        <h4>//select// your search parameters.</h4>
+        <h4>//choose// your search parameters.</h4>
         <form method='POST'>  
             <table>
                 <tbody>
@@ -16,7 +14,9 @@
                             <label for='street'>Street Address</label>
                         </td>
                         <td>
-                            <input id="street", type="text" name='street', value='{{street}}' />
+                            <input id="street", type="text" name='street', value='{{street}}', class="slimField" placeholder="Number"/>
+                            <span class = "error">{{street_error}}</span>
+                            <input id="route", type="text", name='route', value='{{route}}', placeholder="Street Name"/>
                             <span class = "error">{{street_error}}</span>
                         </td>
                     </tr>
@@ -110,6 +110,13 @@
             </table>
             <input type="submit" value="Submit"/>
         </form>  
+        <img class="center" src="https://i.imgur.com/4jEezu7.png" alt="pb logo"/> 
+        <p>
+                <a href='/reviews?username={{session['username']}}'>Review, edit, or delete your posts</a><br>
+                <a href="{{url_for('add')}}">Add a rental rating to placeBook</a><br>
+                <a href="{{url_for('logout')}}">Log out</a><br>
+
+        </p>
 </body>
 
 {% endblock %}

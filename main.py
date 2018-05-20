@@ -3,33 +3,36 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import and_, select, create_engine 
 import os
 import cgi
+from hashutils import make_pw_hash, check_pw_hash
 
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://placebook:asdf@localhost:8889/placebook'
 engine = create_engine('mysql+pymysql://placebook:asdf@localhost:8889/placebook')
-app.config['SQLALCHEMY_ECHO'] = True
+
+
 db = SQLAlchemy(app)
-app.secret_key = 'y337kGcys&zP3B'
+
 
 class UserInfo(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120))
-    password = db.Column(db.String(120))
+    pw_hash = db.Column(db.String(120))
     email = db.Column(db.String(120))
     posts = db.relationship('ResidenceInfo', backref='owner')
 
     def __init__(self, username, email, password):
         self.username = username
-        self.password = password
+        self.pw_hash = make_pw_hash(password)
         self.email = email
 
 class ResidenceInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     owner_id = db.Column(db.Integer, db.ForeignKey('user_info.id'))
     street = db.Column(db.String(120))
+    route = db.Column(db.String(120))
     apt = db.Column(db.String(120))
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
@@ -40,11 +43,12 @@ class ResidenceInfo(db.Model):
     amenities = db.Column(db.String(400))
     management = db.Column(db.String(120))
     rating = db.Column(db.Integer)
-    comment = db.Column(db.String(120))
+    comment = db.Column(db.String(1200))
   
-    def __init__(self, owner, street, apt, city, state, zipcode, residence, room_number, building, amenities, management, rating, comment):
+    def __init__(self, owner, street, route, apt, city, state, zipcode, residence, room_number, building, amenities, management, rating, comment):
         self.owner = owner
         self.street = street
+        self.route = route
         self.apt = apt
         self.city = city
         self.state = state
@@ -86,22 +90,15 @@ def login():
     
     if username == "":
         username_error = "Must enter a user name"
-    elif " " in username:
-        username_error = "Username cannot contain a space"
-    elif len(username) > 20 or len(username) < 3:
-        username_error = "User name must be betweeen 3 and 20 characters"
     elif not user_exists:
-        username_error = "Username does not exist"
+        password_error = "Incorrect username or password"
 
     
     if password == "":
         password_error = "Must enter a password"
-    elif " " in password:
-        password_error = "Password cannot contain a space"
-    elif len(password) > 20 or len(password) < 3:
-        password_error = "Password must be betweeen 3 and 20 characters"
-    elif user_exists and user_exists.password != password:
-        password_error = "Incorrect password"
+    
+    elif user_exists and not check_pw_hash(password, user_exists.pw_hash):
+        password_error = "Incorrect username or password"
     
     if username_error or password_error:
         return render_template('login.html', title = "User Login", username=username, password="", verify="", username_error=username_error, password_error=password_error)
@@ -179,6 +176,7 @@ def add():
     else:
         owner = UserInfo.query.filter_by(username=session['username']).first()
         street = request.form['street']
+        route = request.form['route']
         apt = request.form['apt']
         city = request.form['city']
         state = request.form['state']
@@ -191,34 +189,14 @@ def add():
         rating = request.form['rating']
         comment = request.form['comment']
 
-        street_error = ""
-        apt_error = ""
-        city_error = ""
-        state_error= ""
-        zip_error = ""
+        
         residence_error = ""
         room_error = ""
         rating_error = ""
         comment_error = ""
 
-     
     
-    
-    
-    
-        if street == "":
-            street_error = "Must enter a valid street address"
-        elif not any(i.isdigit() for i in street) or not any(i.isalpha()for i in street):
-            street_error = "Must enter a valid street address"
         
-        if city == "":
-            city_error = "Must enter a city"
-
-        if state == "":
-            state_error = "Must enter a state"
-        elif len(state) > 2:
-            state_error = "Enter valid state abbreviation" 
-
         if residence == "":
             residence_error = "Please select a residence type"
 
@@ -229,16 +207,18 @@ def add():
             rating_error = "Please select a rating"
 
         if comment == "":
-            comment_error = "Please describe your experience"           
+            comment_error = "Please explain your rating"           
     
         
-        if street_error or apt_error or city_error or state_error or zip_error or residence_error or room_error or rating_error or comment_error:
-            return render_template('add-residence.html', title = "Add Residence", street=street, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment, street_error=street_error, apt_error=apt_error, city_error=city_error, state_error=state_error, zip_error=zip_error, rating_error=rating_error)
+        if residence_error or room_error or rating_error or comment_error:
+            return render_template('add-residence.html', title = "Add Residence", street=street, route=route, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment, street_error=street_error, apt_error=apt_error, city_error=city_error, state_error=state_error, zip_error=zip_error, rating_error=rating_error)
         else:
-            new_residence = (ResidenceInfo(owner, street, apt, city, state, zipcode, residence, room_number, building, amenities, management, rating, comment))
+            new_residence = (ResidenceInfo(owner, street, route, apt, city, state, zipcode, residence, room_number, building, amenities, management, rating, comment))
             db.session.add(new_residence)
             db.session.commit()
             return redirect('/thankyou')    
+
+
 @app.route('/thankyou')
 def thankyou():
     username =  session['username']
@@ -251,6 +231,7 @@ def search():
         return render_template('search.html')
     else:
         street = request.form['street']
+        route = request.form['route']
         city = request.form['city']
         state = request.form['state']
         zipcode = request.form['zipcode']
@@ -258,7 +239,7 @@ def search():
         room_number = request.form['room-number']
         rating = request.form['rating']
       
-        return redirect('/results?street={0}&city={1}&state={2}&zipcode={3}&residence={4}&room_number={5}&rating>{6}'.format(street, city, state, zipcode, residence, room_number, rating))
+        return redirect('/results?street={0}&route={1}&city={2}&state={3}&zipcode={4}&residence={5}&room_number={6}&rating={7}'.format(street, route, city, state, zipcode, residence, room_number, rating))
 
 
 @app.route('/results', methods=["GET"])
@@ -273,6 +254,10 @@ def results():
         street = None
     else:
         street = request.args.get('street')
+    if request.args.get('route') == '':
+        route = None
+    else:
+        route = request.args.get('route')
     if request.args.get('city') == '':
         city = None
     else:
@@ -300,6 +285,8 @@ def results():
     
     if street != None:
         search_vars["street"] = street
+    if route != None:
+        search_vars["route"] = route
     if city != None:
         search_vars["city"] = city
     if state != None:
@@ -317,13 +304,20 @@ def results():
         search_terms.append([key, value])
     for i in search_terms:
         if search_terms.index(i) +1 < len(search_terms):
-            string += str("residence_info." + i[0] + " = " + "'" + i[1] + "'" + "AND ")
+            if i[0] == 'rating':
+                string+= str("residence_info." + i[0] + " >= " + "'" + i[1] + "'" + "AND ")
+            else:
+                string += str("residence_info." + i[0] + " = " + "'" + i[1] + "'" + "AND ")
+
         else:
-            string += str("residence_info." + i[0] + " = " + "'" + i[1] + "'" ) 
+            if i[0] == 'rating':
+                string+= str("residence_info." + i[0] + " >= " + "'" + i[1] + "'")
+            else:
+                string += str("residence_info." + i[0] + " = " + "'" + i[1] + "'" ) 
         
     search = ResidenceInfo.query.filter(and_(string))
      
-    return render_template('results.html', search=search, street=street, city=city, state=state, zipcode=zipcode, residence=residence, room_number=room_number, rating=rating, string=string)    
+    return render_template('results.html', search=search, street=street, route=route, city=city, state=state, zipcode=zipcode, residence=residence, room_number=room_number, rating=rating, string=string)    
 
 @app.route('/reviews', methods=['GET'])
 def reviews():
@@ -347,6 +341,7 @@ def edit_post():
     if request.method == 'GET':
         
         street = posts.street
+        route = posts.route
         apt = posts.apt
         city = posts.city
         state = posts.state
@@ -358,9 +353,10 @@ def edit_post():
         management = posts.management
         rating = posts.rating
         comment = posts.comment
-        return render_template('edit_post.html', posts=posts, street=street, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment)
+        return render_template('edit_post.html', posts=posts, street=street, route=route, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment)
     else:
         street = request.form['street']
+        route = request.form['route']
         apt = request.form['apt']
         city = request.form['city']
         state = request.form['state']
@@ -385,7 +381,7 @@ def edit_post():
         
         if street == "":
             street_error = "Must enter a valid street address"
-        elif not any(i.isdigit() for i in street) or not any(i.isalpha()for i in street):
+        elif not any(i.isdigit() for i in street):
             street_error = "Must enter a valid street address"
         
         if city == "":
@@ -406,13 +402,14 @@ def edit_post():
             rating_error = "Please select a rating"
 
         if comment == "":
-            comment_error = "Please describe your experience"           
+            comment_error = "Please explain your rating"           
     
         
         if street_error or apt_error or city_error or state_error or zip_error or residence_error or room_error or rating_error or comment_error:
-            return render_template('add-residence.html', title = "Add Residence", street=street, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment, street_error=street_error, apt_error=apt_error, city_error=city_error, state_error=state_error, zip_error=zip_error, rating_error=rating_error)
+            return render_template('add-residence.html', title = "Add Residence", street=street, route=route, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment, street_error=street_error, apt_error=apt_error, city_error=city_error, state_error=state_error, zip_error=zip_error, rating_error=rating_error)
         else:
             posts.street=street
+            posts.route=route
             posts.apt=apt
             posts.city=city
             posts.state=state
@@ -433,6 +430,8 @@ def delete():
     db.session.delete(post)
     db.session.commit()
     return render_template('delete_post.html')
+
+
     
             
 @app.route('/logout')

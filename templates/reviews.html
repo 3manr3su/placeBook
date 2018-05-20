@@ -9,9 +9,9 @@
       
         {% for post in posts %}
         
-        <h3>{{post.street}}</h3></a>
+        <h3>{{post.street}} {{post.route}}</h3></a>
         <p>
-        {{post.street}}, {{post.apt}}<br><br>
+        {{post.street}} {{post.route}}, {{post.apt}}<br><br>
         {{post.city}}, {{post.state}}<br><br>
         {{post.zipcode}}<br><br>
         <b>Type of residence:</b> {{post.residence}}<br><br>
@@ -20,7 +20,11 @@
         <b>Featured Amenities:</b> {{post.amenities}}<br><br>
         <b>Property Managment:</b> {{post.management}}<br><br>
         <b>Rating:</b> {{post.rating}}<br><br>
-        <b>User description:</b>{{post.comment}}<br><br>
+        </p>
+        <p id='description'>
+        <b>Tenant description:</b>{{post.comment}}<br><br>
+        </p>
+        <p>
         <a href='/edit_post?id={{post.id}}'/>Edit</a>
         
        
@@ -34,7 +38,8 @@
         
         {% endfor %}
         
-        
+        <br>
+        <img class="center" src="https://i.imgur.com/4jEezu7.png" alt="pb logo"/>  
         
     
 </body> 

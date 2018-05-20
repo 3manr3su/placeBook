@@ -10,8 +10,8 @@
     
         {% for post in search %}
         
-        <h2><a href='/single_post?id={{post.id}}'> {{post.street}}</a></h2>
-        {{post.street}}<br>
+        <h2><a href='/single_post?id={{post.id}}'> {{post.street}} {{post.route}}</a></h2>
+        {{post.street}} {{post.route}}<br>
         {{post.city}} <br>
         Rating: {{post.rating}}
         
@@ -27,7 +27,7 @@
 
         
         {% endfor %}
-        
-    
+        <br>
+        <img class="center" src="https://i.imgur.com/4jEezu7.png" alt="pb logo"/> 
 </body> 
 {% endblock %}
