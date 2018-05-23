@@ -1,18 +1,17 @@
-from flask import Flask, request, redirect, render_template, url_for, session, flash
+from placebook import app
+
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import and_, select, create_engine 
-import os
-import cgi
-from hashutils import make_pw_hash, check_pw_hash
+from sqlalchemy import and_, select, create_engine
+from flask import request, redirect, render_template, url_for, session, flash
+import placebook.hashutils
+from placebook.hashutils import make_pw_hash, make_salt, check_pw_hash
+import placebook.settings
+from placebook.settings import API_KEY as apikey
 
-
-app = Flask(__name__)
-app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://placebook:asdf@localhost:8889/placebook'
-engine = create_engine('mysql+pymysql://placebook:asdf@localhost:8889/placebook')
 
 
 db = SQLAlchemy(app)
+engine = create_engine('mysql+pymysql://placebook:asdf@localhost:8889/placebook')
 
 
 class UserInfo(db.Model):
@@ -171,6 +170,7 @@ def create():
 
 @app.route('/add-residence', methods=['POST', 'GET'])
 def add():
+    
     if request.method == 'GET':
         return render_template('add-residence.html', title="Add Residence")
     else:
@@ -188,6 +188,8 @@ def add():
         management = request.form['management']
         rating = request.form['rating']
         comment = request.form['comment']
+        apiscript = apikey
+        
 
         
         residence_error = ""
@@ -211,7 +213,7 @@ def add():
     
         
         if residence_error or room_error or rating_error or comment_error:
-            return render_template('add-residence.html', title = "Add Residence", street=street, route=route, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment, street_error=street_error, apt_error=apt_error, city_error=city_error, state_error=state_error, zip_error=zip_error, rating_error=rating_error)
+            return render_template('add-residence.html', title = "Add Residence", street=street, route=route, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment, rating_error=rating_error, apiscript=apiscript)
         else:
             new_residence = (ResidenceInfo(owner, street, route, apt, city, state, zipcode, residence, room_number, building, amenities, management, rating, comment))
             db.session.add(new_residence)

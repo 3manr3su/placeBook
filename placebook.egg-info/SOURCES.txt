@@ -1,0 +1,7 @@
+placebook/__init__.py
+placebook/hashutils.py
+placebook.egg-info/PKG-INFO
+placebook.egg-info/SOURCES.txt
+placebook.egg-info/dependency_links.txt
+placebook.egg-info/requires.txt
+placebook.egg-info/top_level.txt
