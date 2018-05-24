@@ -6,7 +6,13 @@ from flask import request, redirect, render_template, url_for, session, flash
 import placebook.hashutils
 from placebook.hashutils import make_pw_hash, make_salt, check_pw_hash
 import placebook.settings
-from placebook.settings import API_KEY as apikey
+apikey = app.config["API_KEY"]
+#with open("appvar2.txt", "w") as f:
+#    f.write(apikey)
+#apikey = "fuckme"
+
+
+
 
 
 
@@ -172,7 +178,8 @@ def create():
 def add():
     
     if request.method == 'GET':
-        return render_template('add-residence.html', title="Add Residence")
+        api = apikey
+        return render_template('add-residence.html', title="Add Residence", api = api)
     else:
         owner = UserInfo.query.filter_by(username=session['username']).first()
         street = request.form['street']
@@ -188,7 +195,7 @@ def add():
         management = request.form['management']
         rating = request.form['rating']
         comment = request.form['comment']
-        apiscript = apikey
+        
         
 
         
@@ -213,7 +220,7 @@ def add():
     
         
         if residence_error or room_error or rating_error or comment_error:
-            return render_template('add-residence.html', title = "Add Residence", street=street, route=route, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment, rating_error=rating_error, apiscript=apiscript)
+            return render_template('add-residence.html', title = "Add Residence", street=street, route=route, apt=apt, city=city, state=state, zipcode=zipcode, building=building, management=management, rating=rating, comment=comment, rating_error=rating_error)
         else:
             new_residence = (ResidenceInfo(owner, street, route, apt, city, state, zipcode, residence, room_number, building, amenities, management, rating, comment))
             db.session.add(new_residence)
@@ -331,10 +338,11 @@ def reviews():
 
 @app.route('/single_post', methods=['GET'])
 def single_post():
+    api = apikey
     id = request.args.get('id')
     posts = ResidenceInfo.query.filter_by(id=id).all()
     
-    return render_template('single_post.html', posts=posts)
+    return render_template('single_post.html', posts=posts, api=api)
 
 @app.route('/edit_post', methods=['POST', 'GET'])
 def edit_post():
