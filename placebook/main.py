@@ -7,9 +7,7 @@ import placebook.hashutils
 from placebook.hashutils import make_pw_hash, make_salt, check_pw_hash
 import placebook.settings
 apikey = app.config["API_KEY"]
-#with open("appvar2.txt", "w") as f:
-#    f.write(apikey)
-#apikey = "fuckme"
+
 
 
 
