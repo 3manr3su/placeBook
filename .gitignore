@@ -2,4 +2,4 @@ __pyache__
 .vscode
 placebook.egg-info
 settings.cfg
-*.cfg
+*.cfgsettings.cfg
